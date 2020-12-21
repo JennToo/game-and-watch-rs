@@ -14,6 +14,10 @@ panic-semihosting = "^0.5.6"
 version = "0.12.1"
 features = ["stm32h7b3", "rt"]
 
+[dependencies.stm32h7xx-hal]
+version = "0.8.0"
+features = ["stm32h7b3","rt"]
+
 [[bin]]
 name = "simple_test"
 test = false

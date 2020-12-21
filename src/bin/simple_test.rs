@@ -1,7 +1,7 @@
 #![no_main]
 #![no_std]
 
-use game_and_watch::GameAndWatch;
+use game_and_watch::game_and_watch;
 
 use panic_semihosting as _;
 
@@ -10,10 +10,7 @@ use cortex_m_semihosting::hprintln;
 
 #[entry]
 fn main() -> ! {
-    let mut system = GameAndWatch::init();
-
-    loop {
+    game_and_watch(|| {
         hprintln!("Hello from Rust!").unwrap();
-        system.update();
-    }
+    })
 }

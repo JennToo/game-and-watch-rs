@@ -1,27 +1,27 @@
 #![no_std]
 
 use stm32h7::stm32h7b3::Peripherals;
+use stm32h7xx_hal::prelude::*;
 
-pub struct GameAndWatch {
-    /// Raw access to the hardware
-    pub hardware: Peripherals,
-    // TODO: LCD buffer
-    // TODO: Audio buffer
-}
+pub fn game_and_watch<F>(user_code: F) -> !
+where
+    F: Fn(),
+{
+    let hardware = Peripherals::take().unwrap();
 
-impl GameAndWatch {
-    /// Initialize hardware and return a system handle.
-    ///
-    /// You can only call this once! If you call it more than once, this function will panic.
-    pub fn init() -> GameAndWatch {
-        let hardware = Peripherals::take().unwrap();
+    // TODO: vos0 support would be nice
+    let pwr = hardware.PWR.constrain();
+    let pwrconfig = pwr.ldo().freeze();
 
-        // TODO: Actually initialize stuff
+    let rcc = hardware.RCC.constrain();
+    let ccdr = rcc
+        .sys_ck(280.mhz())
+        .pll3_p_ck(72.mhz())
+        .pll3_q_ck(72.mhz())
+        .pll3_r_ck(6.mhz()) // LTDC Pixel clock
+        .freeze(pwrconfig, &hardware.SYSCFG);
 
-        GameAndWatch { hardware }
+    loop {
+        user_code();
     }
-
-    /// Call this once per frame to "do stuff"
-    // TODO: Do stuff
-    pub fn update(&mut self) {}
 }
